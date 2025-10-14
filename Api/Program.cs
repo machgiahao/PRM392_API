@@ -27,6 +27,11 @@ namespace Api
 
             app.UseAuthorization();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<SalesAppDbContext>();
+                db.Database.Migrate(); // apply migrations automatically
+            }
 
             app.MapControllers();
 
