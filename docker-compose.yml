@@ -1,0 +1,16 @@
+services:
+
+  SalesAppDB:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: salesAppDb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=150404String.
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_salesAppDb:/var/opt/mssql
+    restart: always
+
+volumes:
+  sqlserver_salesAppDb:
