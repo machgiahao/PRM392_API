@@ -1,9 +1,11 @@
+using Api.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
 using Repositories.Uow;
 using Services.Authentication;
+using Services.Chat;
 using System.Text;
 
 namespace Api
@@ -19,10 +21,13 @@ namespace Api
 
             builder.Services.AddScoped<IUnitOfWork, GenericUnitOfWork<SalesAppDbContext>>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IChatService, ChatService>();
 
+            builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -36,8 +41,6 @@ namespace Api
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
@@ -56,6 +59,7 @@ namespace Api
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<ChatHub>("/chathub");
 
             app.Run();
         }
