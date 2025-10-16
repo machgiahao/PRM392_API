@@ -16,6 +16,12 @@ public class Product
 
     public string? ImageUrl { get; set; }
 
+    public string? Brand { get; set; }
+
+    public double Rating { get; set; }
+
+    public int SoldCount { get; set; }
+
     public int? CategoryId { get; set; }
 
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
