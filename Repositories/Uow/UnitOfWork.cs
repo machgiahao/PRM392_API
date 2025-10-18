@@ -19,6 +19,7 @@ public class GenericUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbCo
         _repositories = new ConcurrentDictionary<Type, object>();
     }
 
+
     public IRepository<T> Repository<T>() where T : class
     {
         return (IRepository<T>)_repositories.GetOrAdd(typeof(T), _ =>

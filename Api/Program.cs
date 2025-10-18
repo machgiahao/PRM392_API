@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repositories;
+using Repositories.Repositories.Interfaces;
+using Repositories.Repositories;
 using Repositories.Uow;
 using Services.Authentication;
 using Services.Chat;
+using Services.Implements;
+using Services.Interfaces;
+using Services.Mappers;
 using System.Text;
 
 namespace Api
@@ -19,10 +24,13 @@ namespace Api
             builder.Services.AddDbContext<SalesAppDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("SalesAppDB")));
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddScoped<IUnitOfWork, GenericUnitOfWork<SalesAppDbContext>>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IChatService, ChatService>();
-
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
