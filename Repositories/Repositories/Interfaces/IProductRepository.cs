@@ -14,4 +14,6 @@ public interface IProductRepository : IRepository<Product>
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<Product> GetProductDetailAsync(int productId, CancellationToken cancellationToken = default);
 }

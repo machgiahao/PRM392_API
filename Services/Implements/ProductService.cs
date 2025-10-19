@@ -38,4 +38,10 @@ public class ProductService : IProductService
         // 3. Tạo và trả về đối tượng PagedResult
         return new PagedResult<ProductDto>(productDtos, pageNumber, pageSize, totalCount);
     }
+
+    public async Task<ProductDetailDto> GetProductDetailAsync(int productId)
+    {
+        var productDetail = await _productRepository.GetProductDetailAsync(productId);
+        return _mapper.Map<ProductDetailDto>(productDetail);
+    }
 }

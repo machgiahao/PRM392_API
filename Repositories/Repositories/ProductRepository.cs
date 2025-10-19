@@ -88,4 +88,9 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .ToListAsync(cancellationToken);
         return (items, totalCount);
     }
+
+    public async Task<Product> GetProductDetailAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        return await GetFirstOrDefaultAsync(p => p.ProductId == productId, cancellationToken, p => p.Category);
+    }
 }

@@ -14,4 +14,6 @@ public interface IProductService
             double? minRating,
             int pageNumber,
             int pageSize);
+
+    Task<ProductDetailDto> GetProductDetailAsync(int productId);
 }

@@ -37,4 +37,19 @@ public class ProductController : ControllerBase
             return StatusCode(500, "Internal server error!");
         }
     }
+        
+    [HttpGet("{productId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetProductDetail(int productId)
+    {
+        try
+        {
+            var productDetail = await _productService.GetProductDetailAsync(productId);
+            return Ok(productDetail);
+        } catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error!");
+        }
+    }
 }
