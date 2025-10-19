@@ -20,6 +20,26 @@
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7002;http://localhost:5099"
     },
+    "All Interfaces": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://0.0.0.0:7002;http://0.0.0.0:5099"
+    },
+    "IP": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://192.168.1.235:7002;http://192.168.1.235:5099"
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
