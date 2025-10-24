@@ -33,5 +33,60 @@ namespace Api.Controllers
             return Ok("Product added to cart");
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(CartDto), 200)]
+        public async Task<IActionResult> GetCart()
+        {
+            var userId = GetCurrentUserId();
+            var cartDto = await _cartService.GetCartByUserIdAsync(userId);
+            return Ok(cartDto);
+        }
+
+        [HttpPut("item/{productId}")]
+        [ProducesResponseType(typeof(CartDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UpdateItemQuantity(int productId, [FromBody] UpdateQuantityDto dto)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var cartDto = await _cartService.UpdateItemQuantityAsync(userId, productId, dto.Quantity);
+                return Ok(cartDto);
+            }
+            catch (Exception ex) when (ex.Message.Contains("not found"))
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("item/{productId}")]
+        [ProducesResponseType(typeof(CartDto), 200)]
+        public async Task<IActionResult> RemoveItemFromCart(int productId)
+        {
+            var userId = GetCurrentUserId();
+            var cartDto = await _cartService.RemoveItemFromCartAsync(userId, productId);
+            return Ok(cartDto);
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = GetCurrentUserId();
+            await _cartService.ClearCartAsync(userId);
+
+            return NoContent();
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token.");
+            }
+            return userId;
+        }
     }
 }

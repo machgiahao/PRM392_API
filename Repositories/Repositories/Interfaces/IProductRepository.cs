@@ -16,4 +16,5 @@ public interface IProductRepository : IRepository<Product>
         CancellationToken cancellationToken = default);
 
     Task<Product> GetProductDetailAsync(int productId, CancellationToken cancellationToken = default);
+    Task<List<Product>> GetProductsByIdsAsync(List<int> productIds);
 }

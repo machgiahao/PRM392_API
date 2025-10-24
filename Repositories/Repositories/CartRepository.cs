@@ -13,7 +13,7 @@ namespace Repositories.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Cart> GetOrCreateCartByUserIdAsync(int userId)
+        public async Task<Cart> GetOrCreateActiveCartByUserIdAsync(int userId)
         {
             var cart = await _dbContext.Carts
                 .Include(c => c.CartItems)
@@ -25,13 +25,26 @@ namespace Repositories.Repositories
                 {
                     UserId = userId,
                     Status = "Active",
-                    TotalPrice = 0
+                    TotalPrice = 0,
+                    CartItems = new List<CartItem>()
                 };
-                await _dbContext.Carts.AddAsync(cart);
+                _dbContext.Carts.Add(cart);
                 await _dbContext.SaveChangesAsync();
             }
-
             return cart;
+        }
+
+        public async Task<List<CartItem>> GetCartItemsAsync(int cartId)
+        {
+            return await _dbContext.CartItems
+                .Where(ci => ci.CartId == cartId)
+                .ToListAsync();
+        }
+
+        public async Task<CartItem> GetCartItemAsync(int cartId, int productId)
+        {
+            return await _dbContext.CartItems
+                .FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId);
         }
 
         public async Task AddItemToCartAsync(int cartId, CartItem item)
@@ -44,7 +57,36 @@ namespace Repositories.Repositories
         public async Task UpdateCartAsync(Cart cart)
         {
             _dbContext.Carts.Update(cart);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); 
+        }
+
+        public void AddCartItem(CartItem item)
+        {
+            _dbContext.CartItems.Add(item);
+        }
+
+        public void UpdateCartItem(CartItem item)
+        {
+            _dbContext.CartItems.Update(item);
+        }
+
+        public void UpdateCart(Cart cart)
+        {
+            _dbContext.Carts.Update(cart);
+        }
+
+        public void RemoveCartItem(CartItem item)
+        {
+            _dbContext.CartItems.Remove(item);
+        }
+
+        public async Task ClearAllItemsAsync(int cartId)
+        {
+            var items = await GetCartItemsAsync(cartId);
+            if (items.Any())
+            {
+                _dbContext.CartItems.RemoveRange(items);
+            }
         }
     }
 

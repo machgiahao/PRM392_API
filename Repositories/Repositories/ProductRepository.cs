@@ -6,10 +6,11 @@ namespace Repositories.Repositories;
 
 public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
-
+    private readonly SalesAppDbContext _dbContext;
 
     public ProductRepository(SalesAppDbContext dbContext) : base(dbContext)
     {
+        _dbContext = dbContext;
     }
 
     public async Task<(IEnumerable<Product> Items, int TotalCount)> GetProductsAsync(string[] sortBy, int? categoryId, string? brand, decimal? minPrice, decimal? maxPrice, double? minRating, int pageNumber, int pageSize,
@@ -92,5 +93,16 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     public async Task<Product> GetProductDetailAsync(int productId, CancellationToken cancellationToken = default)
     {
         return await GetFirstOrDefaultAsync(p => p.ProductId == productId, cancellationToken, p => p.Category);
+    }
+
+    public async Task<List<Product>> GetProductsByIdsAsync(List<int> productIds)
+    {
+        if (productIds == null || !productIds.Any())
+        {
+            return new List<Product>();
+        }
+        return await _dbContext.Products
+            .Where(p => productIds.Contains(p.ProductId))
+            .ToListAsync();
     }
 }
