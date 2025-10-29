@@ -33,6 +33,7 @@ namespace Api
             builder.Services.AddScoped<IChatService, ChatService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
