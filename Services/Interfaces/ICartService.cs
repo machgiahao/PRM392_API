@@ -4,7 +4,6 @@ namespace Services.Interfaces
 {
     public interface ICartService
     {
-        Task AddToCartAsync(int userId, AddToCartDto item);
         Task<CartDto> GetCartByUserIdAsync(int userId);
         Task<CartDto> AddItemToCartAsync(int userId, UpdateCartItemDto itemDto);
         Task<CartDto> UpdateItemQuantityAsync(int userId, int productId, int quantity);

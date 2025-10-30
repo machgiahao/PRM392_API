@@ -23,4 +23,5 @@ public class User
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public ICollection<Order> Orders { get; set; } = new List<Order>();
+    public ICollection<DeviceToken> DeviceTokens { get; set; } = new List<DeviceToken>();
 }
