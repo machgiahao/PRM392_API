@@ -17,7 +17,6 @@ namespace Api.Controllers
             _cartService = cartService;
         }
 
-        [Authorize(Roles ="User")]
         [HttpPost("add-to-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
