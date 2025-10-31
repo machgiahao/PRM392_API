@@ -29,7 +29,11 @@ namespace Api.Controllers
             int userId = int.Parse(userIdClaim);
 
             await _cartService.AddItemToCartAsync(userId, dto);
-            return Ok("Product added to cart");
+            return Ok(new
+            {
+                success = true,
+                message = "Product added to cart successfully"
+            });
         }
 
         [HttpGet]
