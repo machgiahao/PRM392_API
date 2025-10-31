@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Repositories.Entities;
-using Repositories.Repositories;
 using Repositories.Repositories.Interfaces;
 using Repositories.Uow;
 using Services.Dtos;
@@ -164,7 +163,7 @@ namespace Services.Implements
             var cart = await _cartRepository.GetOrCreateActiveCartByUserIdAsync(userId);
 
             var cartDto = _mapper.Map<CartDto>(cart);
-            
+            cartDto.Items.Clear();
             if (cart.CartItems.Any())
             {
                 var productIds = cart.CartItems.Select(ci => ci.ProductId.Value).ToList();
@@ -186,7 +185,7 @@ namespace Services.Implements
                     });
                 }
             }
-
+            cartDto.TotalCartPrice = cartDto.Items.Sum(item => item.TotalItemPrice);
             return cartDto;
         }
 
