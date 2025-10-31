@@ -14,7 +14,6 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryDto>();
         CreateMap<Product, ProductDetailDto>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName));
-
         CreateMap<Cart, CartDto>();
         CreateMap<CartItem, CartItemDto>()
             .ForMember(dest => dest.PricePerItem, opt => opt.MapFrom(src => src.Price));

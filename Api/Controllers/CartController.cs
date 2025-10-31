@@ -21,7 +21,7 @@ namespace Api.Controllers
         [HttpPost("add-to-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddToCart([FromBody] AddToCartDto dto)
+        public async Task<IActionResult> AddToCart([FromBody] UpdateCartItemDto dto)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
@@ -29,7 +29,7 @@ namespace Api.Controllers
 
             int userId = int.Parse(userIdClaim);
 
-            await _cartService.AddToCartAsync(userId, dto);
+            await _cartService.AddItemToCartAsync(userId, dto);
             return Ok("Product added to cart");
         }
 

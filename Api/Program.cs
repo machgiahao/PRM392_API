@@ -12,6 +12,8 @@ using Services.Implements;
 using Services.Interfaces;
 using Services.Mappers;
 using System.Text;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace Api
 {
@@ -25,15 +27,26 @@ namespace Api
                     options.UseSqlServer(builder.Configuration.GetConnectionString("SalesAppDB")));
 
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+            var firebaseKeyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "firebase-admin-key.json");
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(firebaseKeyPath)
+            });
+
             builder.Services.AddScoped<IUnitOfWork, GenericUnitOfWork<SalesAppDbContext>>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IDeviceTokenRepository, DeviceTokenRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IChatService, ChatService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICartService, CartService>();
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IDeviceTokenService, DeviceTokenService>();
+
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

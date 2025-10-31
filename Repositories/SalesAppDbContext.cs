@@ -17,6 +17,7 @@ public class SalesAppDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
     public DbSet<StoreLocation> StoreLocations { get; set; }
+    public DbSet<DeviceToken> DeviceTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +50,14 @@ public class SalesAppDbContext : DbContext
             builder.Property(u => u.Role)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            builder.HasMany(u => u.Notifications)
+                   .WithOne(n => n.User)
+                   .HasForeignKey(n => n.UserId);
+
+            builder.HasMany(u => u.DeviceTokens)
+                   .WithOne(dt => dt.User)
+                   .HasForeignKey(dt => dt.UserId);
         });
 
         modelBuilder.Entity<Category>(builder =>
@@ -169,6 +178,14 @@ public class SalesAppDbContext : DbContext
             builder.Property(sl => sl.Address)
                 .IsRequired()
                 .HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<DeviceToken>(builder =>
+        {
+            builder.HasKey(dt => dt.DeviceTokenId);
+
+            builder.Property(dt => dt.Token)
+                   .IsRequired();
         });
     }
 }

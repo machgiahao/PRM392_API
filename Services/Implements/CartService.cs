@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Repositories.Entities;
+using Repositories.Repositories;
 using Repositories.Repositories.Interfaces;
 using Repositories.Uow;
 using Services.Dtos;
@@ -13,48 +14,20 @@ namespace Services.Implements
         private readonly IProductRepository _productRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public CartService(ICartRepository cartRepository,
                          IProductRepository productRepository,
                          IUnitOfWork unitOfWork,
-                         IMapper mapper)
+                         IMapper mapper,
+                         INotificationService notificationService)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notificationService = notificationService;
         }
-
-        public async Task AddToCartAsync(int userId, AddToCartDto item)
-        {
-            var product = await _productRepository.GetByIdAsync(item.ProductId);
-            if (product == null)
-                throw new Exception("Product not found");
-
-            var cart = await _cartRepository.GetOrCreateActiveCartByUserIdAsync(userId);
-
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == item.ProductId);
-            if (cartItem != null)
-            {
-                cartItem.Quantity += item.Quantity;
-                cartItem.Price = product.Price * cartItem.Quantity;
-            }
-            else
-            {
-                cartItem = new CartItem
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    Price = product.Price * item.Quantity,
-                    CartId = cart.CartId
-                };
-                await _cartRepository.AddItemToCartAsync(cart.CartId, cartItem);
-            }
-
-            cart.TotalPrice = cart.CartItems.Sum(ci => ci.Price);
-            await _cartRepository.UpdateCartAsync(cart);
-        }
-
 
         public async Task<CartDto> AddItemToCartAsync(int userId, UpdateCartItemDto itemDto)
         {
@@ -70,14 +43,12 @@ namespace Services.Implements
 
             if (existingItem != null)
             {
-                // Logic ĐÚNG: Cập nhật số lượng, lưu ĐƠN GIÁ
                 existingItem.Quantity += itemDto.Quantity;
                 existingItem.Price = product.Price;
                 _cartRepository.UpdateCartItem(existingItem);
             }
             else
             {
-                // Logic ĐÚNG: Tạo mới, lưu ĐƠN GIÁ
                 var newItem = new CartItem
                 {
                     CartId = cart.CartId,
@@ -86,14 +57,22 @@ namespace Services.Implements
                     Price = product.Price
                 };
                 _cartRepository.AddCartItem(newItem);
+                cart.CartItems.Add(newItem);
             }
 
-            // Tính toán lại tổng tiền (dùng hàm đã tối ưu)
             RecalculateCartTotal(cart);
 
-            // Lưu 1 lần duy nhất
             await _unitOfWork.SaveChangesAsync();
+            try
+            {
+                int totalItemsInCart = cart.CartItems.Sum(ci => ci.Quantity);
 
+                await _notificationService.SendCartUpdatePush(userId, totalItemsInCart);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send push notification: {ex.Message}");
+            }
             return await GetCartByUserIdAsync(userId);
         }
 
@@ -116,6 +95,16 @@ namespace Services.Implements
 
                 RecalculateCartTotal(cart);
                 await _unitOfWork.SaveChangesAsync();
+                try
+                {
+                    int totalItemsInCart = cart.CartItems.Sum(ci => ci.Quantity);
+
+                    await _notificationService.SendCartUpdatePush(userId, totalItemsInCart);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send push notification: {ex.Message}");
+                }
             }
 
             return await GetCartByUserIdAsync(userId);
@@ -134,6 +123,16 @@ namespace Services.Implements
 
                 RecalculateCartTotal(cart);
                 await _unitOfWork.SaveChangesAsync();
+                try
+                {
+                    int totalItemsInCart = cart.CartItems.Sum(ci => ci.Quantity);
+
+                    await _notificationService.SendCartUpdatePush(userId, totalItemsInCart);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send push notification: {ex.Message}");
+                }
             }
 
             return await GetCartByUserIdAsync(userId);
@@ -148,6 +147,16 @@ namespace Services.Implements
             _cartRepository.UpdateCart(cart);
 
             await _unitOfWork.SaveChangesAsync();
+            try
+            {
+                int totalItemsInCart = 0;
+
+                await _notificationService.SendCartUpdatePush(userId, totalItemsInCart);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send push notification: {ex.Message}");
+            }
         }
 
         public async Task<CartDto> GetCartByUserIdAsync(int userId)
