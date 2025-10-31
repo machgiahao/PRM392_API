@@ -46,6 +46,7 @@ namespace Api
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IDeviceTokenService, DeviceTokenService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
