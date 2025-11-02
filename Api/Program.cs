@@ -39,6 +39,7 @@ namespace Api
             builder.Services.AddScoped<ICartRepository, CartRepository>();
             builder.Services.AddScoped<IDeviceTokenRepository, DeviceTokenRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IChatService, ChatService>();
@@ -47,6 +48,7 @@ namespace Api
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IDeviceTokenService, DeviceTokenService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
