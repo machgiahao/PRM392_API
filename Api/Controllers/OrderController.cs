@@ -83,6 +83,27 @@ namespace Api.Controllers
             }
         }
 
+        [HttpPatch("{orderId}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto request, CancellationToken cancellationToken)
+        {
+            try
+            {
+
+                var success = await _orderService.UpdateOrderStatusAsync(orderId, request.NewStatus, cancellationToken);
+
+                if (!success)
+                {
+                    return NotFound(new { message = "Can not found this order to update." });
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Have (an) errors when update order status." });
+            }
+        }
+
         private int GetUserIdFromToken()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
