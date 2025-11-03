@@ -49,6 +49,7 @@ namespace Api
             builder.Services.AddScoped<IDeviceTokenService, DeviceTokenService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IPayPalService, PayPalService>();
 
             builder.Services.AddSignalR();
             builder.Services.AddControllers();
