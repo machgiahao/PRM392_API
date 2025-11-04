@@ -30,7 +30,7 @@ namespace Api.Controllers
                     request.BillingAddress,
                     cancellationToken);
 
-                return Ok(new { message = "Order is created success" });
+                return Ok(newOrder);
             }
             catch (InvalidOperationException ex)
             {
