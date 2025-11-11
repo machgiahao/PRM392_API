@@ -1,4 +1,6 @@
-﻿namespace Repositories.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Repositories.Entities;
 
 public class CartItem
 {
@@ -12,6 +14,7 @@ public class CartItem
 
     public decimal Price { get; set; }
 
+    [JsonIgnore]
     public Cart? Cart { get; set; }
 
     public Product? Product { get; set; }

@@ -1,4 +1,6 @@
-﻿namespace Repositories.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Repositories.Entities;
 
 public class Cart
 {
@@ -12,6 +14,7 @@ public class Cart
 
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
+    [JsonIgnore]
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public User? User { get; set; }
