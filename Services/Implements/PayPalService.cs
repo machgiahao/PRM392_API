@@ -71,7 +71,16 @@ namespace Services.Implements
         {
             var token = await GetAccessTokenAsync();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.PostAsync($"{_baseUrl}/v2/checkout/orders/{orderId}/capture", null);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/v2/checkout/orders/{orderId}/capture")
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json") // empty JSON body
+            };
+
+            var response = await _httpClient.SendAsync(request);
+
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
             return response.IsSuccessStatusCode;
         }
     }
