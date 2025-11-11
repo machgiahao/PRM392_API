@@ -32,5 +32,11 @@ public class MappingProfile : Profile
         CreateMap<Order, OrderDetailDto>()
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Cart != null ? src.Cart.TotalPrice : 0))
             .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Cart.CartItems));
+        CreateMap<CartItem, ProductOrderItemDto>()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+        CreateMap<Order, CreateOrderResponse>()
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Cart != null ? src.Cart.TotalPrice : 0))
+            .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Cart.CartItems));
     }
 }

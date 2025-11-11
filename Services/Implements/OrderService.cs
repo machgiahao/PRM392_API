@@ -22,7 +22,7 @@ namespace Services.Implements
             _mapper = mapper;
         }
 
-        public async Task<Order> CreateOrderFromCartAsync(int userId, string paymentMethod, string billingAddress, CancellationToken cancellationToken = default)
+        public async Task<CreateOrderResponse> CreateOrderFromCartAsync(int userId, string paymentMethod, string billingAddress, CancellationToken cancellationToken = default)
         {
             var activeCart = await _cartRepository.GetOrCreateActiveCartByUserIdAsync(userId);
 
@@ -46,7 +46,16 @@ namespace Services.Implements
             _cartRepository.UpdateCart(activeCart);
 
             await _uow.SaveChangesAsync(cancellationToken);
-            return newOrder;
+
+            var createdOrderDetails = await _orderRepository.GetOrderDetailAsync(newOrder.OrderId, cancellationToken);
+            if (createdOrderDetails == null)
+            {
+                throw new InvalidOperationException("Failed to retrieve the newly created order details.");
+            }
+
+            var response = _mapper.Map<CreateOrderResponse>(createdOrderDetails);
+
+            return response;
         }
 
         public async Task<IEnumerable<OrderDto>> GetUserOrdersAsync(int userId, CancellationToken cancellationToken = default)
